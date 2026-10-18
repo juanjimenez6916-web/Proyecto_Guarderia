@@ -1,0 +1,38 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build guarderia",
+            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${workspaceFolder}\\main.cpp",
+                "${workspaceFolder}\\Infante.cpp",
+                "${workspaceFolder}\\Tutor.cpp",
+                "${workspaceFolder}\\Expediente_Medico.cpp",
+                "${workspaceFolder}\\Expediente_Lactante.cpp",
+                "${workspaceFolder}\\Expediente_Preescolar.cpp",
+                "${workspaceFolder}\\Guarderia.cpp",
+                "${workspaceFolder}\\Registro.cpp",
+                "${workspaceFolder}\\Ficha_Medica.cpp",
+                "${workspaceFolder}\\Ingreso_Guarderia.cpp",
+                "${workspaceFolder}\\Menu_Guarderia.cpp",
+                "-o",
+                "${workspaceFolder}\\guarderia.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compila todos los .cpp del proyecto en guarderia.exe"
+        }
+    ],
+    "version": "2.0.0"
+}
