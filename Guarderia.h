@@ -8,15 +8,15 @@ class Guarderia {
 private:
     std::string nombreGuarderia;
 
-    // Lista de PUNTEROS INTELIGENTES a infantes. ¿Por qué no objetos por valor?
+    // Lista de PUNTEROS INTELIGENTES a infantes. ¿Por que no objetos por valor?
     //  1) Un vector puede MOVER sus elementos en memoria al crecer o al borrar,
-    //     y un puntero normal a un elemento quedaría apuntando a la nada.
+    //     y un puntero normal a un elemento quedaria apuntando a la nada.
     //  2) Otras clases (Registro) deben referirse al MISMO infante real, no a copias.
-    //  3) shared_ptr libera la memoria solo cuando nadie más lo usa (sin new/delete).
+    //  3) shared_ptr libera la memoria solo cuando nadie mas lo usa (sin new/delete).
     std::vector<std::shared_ptr<Infante>> infantes;
 
     int capacidadMaxima;
-    int cantidadActual;     // redundante con infantes.size(), pero está en el UML:
+    int cantidadActual;     // redundante con infantes.size(), pero esta en el UML:
                             // se mantiene SINCRONIZADO en cada cambio.
 
 public:
@@ -24,19 +24,19 @@ public:
 
     // Cambio respecto al UML: devuelven bool (antes void) para poder avisar si
     // la operación se hizo (true) o no (false: lleno, repetido, no encontrado,
-    // o con ids / teléfonos que no cumplen el formato de Validaciones.h).
+    // o con ids / telefonos que no cumplen el formato de Validaciones.h).
     bool inscribirInfante(const std::shared_ptr<Infante>& infante);
     bool eliminarInfante(const std::string& idInfante);
 
     // Devuelve un puntero; si no existe devuelve nullptr ("no apunta a nada").
     // Un Infante por valor no podría representar "no encontrado", y una copia
-    // no permitiría modificar al infante real.
+    // no permitiria modificar al infante real.
     std::shared_ptr<Infante> buscarInfante(const std::string& idInfante) const;
 
-    // Separar a los infantes por categoría ("Lactante" / "Preescolar").
+    // Separar a los infantes por categoria ("Lactante" / "Preescolar").
     std::vector<std::shared_ptr<Infante>> obtenerPorCategoria(const std::string& categoria) const;
 
-    // [SOBRECARGA] Sin parámetro: total. Con parámetro: solo de esa categoría.
+    // [SOBRECARGA] Sin parametro: total. Con parametro: solo de esa categoria.
     int contarInfantes() const;
     int contarInfantes(const std::string& categoria) const;
 

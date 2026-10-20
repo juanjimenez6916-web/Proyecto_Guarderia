@@ -4,7 +4,7 @@
 
 // --- Reglas ---
 const int DIGITOS_ID = 4;          // I-0001 y T-0001 llevan 4 dígitos
-const int DIGITOS_TELEFONO = 10;   // telefono de 10 dígitos
+const int DIGITOS_TELEFONO = 10;   // telefono de 10 digitos
 
 // true si el texto NO esta vacio y TODOS sus caracteres son digitos '0'..'9'.
 inline bool soloDigitos(const std::string& texto) { //inline: es una palabra clave que se coloca antes de una función
@@ -21,7 +21,7 @@ inline bool soloDigitos(const std::string& texto) { //inline: es una palabra cla
     return true;
 }
 
-// Comprueba el formato "<letra>-<N dígitos>". Ejemplo: ("I-0001", 'I', 4) -> true
+// Comprueba el formato "<letra>-<N digitos>". Ejemplo: ("I-0001", 'I', 4) -> true
 inline bool tieneFormatoId(const std::string& texto, char letra, int digitos) {
     // Largo esperado: letra + guion + los dígitos.
     if (texto.size() != static_cast<std::size_t>(2 + digitos)) {

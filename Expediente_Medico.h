@@ -36,7 +36,7 @@ public:
     const std::vector<std::string>& getDiscapacidades() const;
 
     // [POLIMORFISMO] Metodos que las hijas sobrescriben.
-    // El enlace es DINÁMICO: C++ elige la version mirando el tipo REAL del objeto
+    // El enlace es DINAMICO: C++ elige la version mirando el tipo REAL del objeto
     // en tiempo de ejecucion, no el tipo del puntero.
     virtual std::string getCategoria() const = 0;     // "= 0": virtual PURO. Cada hija DEBE implementarlo.
     virtual std::string generarResumen() const;       // texto legible; las hijas lo extienden

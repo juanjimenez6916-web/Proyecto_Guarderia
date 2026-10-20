@@ -1,5 +1,5 @@
 #include "Guarderia.h"
-#include "Validaciones.h"   // reglas de formato (ids y teléfonos)
+#include "Validaciones.h"   // reglas de formato (ids y telefonos)
 
 Guarderia::Guarderia(const std::string& nombreGuarderia, int capacidadMaxima)
     : nombreGuarderia(nombreGuarderia),
@@ -8,7 +8,7 @@ Guarderia::Guarderia(const std::string& nombreGuarderia, int capacidadMaxima)
 {
 }
 
-// GUARD CLAUSES: primero se revisa todo lo que IMPEDIRÍA la operación y se sale
+// GUARD CLAUSES: primero se revisa todo lo que IMPEDIRIA la operacion y se sale
 // temprano con 'return false'. El caso feliz queda al final, sin if anidados.
 bool Guarderia::inscribirInfante(const std::shared_ptr<Infante>& infante) {
     if (!infante) {                   // puntero vacío (nullptr)
@@ -17,8 +17,8 @@ bool Guarderia::inscribirInfante(const std::shared_ptr<Infante>& infante) {
     if (cantidadActual >= capacidadMaxima) {   // sin cupo
         return false;
     }
-    // RED DE SEGURIDAD: el menú ya valida lo que escribe el usuario, pero la
-    // guardería también rechaza datos con mal formato (así nadie puede colarlos
+    // RED DE SEGURIDAD: el menu ya valida lo que escribe el usuario, pero la
+    // guarderia tambien rechaza datos con mal formato (asi nadie puede colarlos
     // creando infantes por otro camino).
     if (!esIdInfanteValido(infante->getIdInfante())) {
         return false;
@@ -31,22 +31,22 @@ bool Guarderia::inscribirInfante(const std::shared_ptr<Infante>& infante) {
     if (buscarInfante(infante->getIdInfante()) != nullptr) {   // id repetido
         return false;
     }
-    // Ya NO se copia el infante: la guardería y quien lo creó COMPARTEN el mismo
-    // objeto. (Copiar un Infante copiaría el puntero del expediente, no el
-    // expediente: dos infantes "distintos" compartirían uno solo.)
+    // Ya NO se copia el infante: la guarderia y quien lo creo COMPARTEN el mismo
+    // objeto. (Copiar un Infante copiaria el puntero del expediente, no el
+    // expediente: dos infantes "distintos" compartirian uno solo.)
     infantes.push_back(infante);
     // static_cast<int>: size() devuelve un tipo sin signo (size_t); convertimos
-    // a int de forma explícita porque cantidadActual es int.
+    // a int de forma explicita porque cantidadActual es int.
     cantidadActual = static_cast<int>(infantes.size());
     return true;
 }
 
 bool Guarderia::eliminarInfante(const std::string& idInfante) {
-    // size_t es el tipo correcto para recorrer un vector por índice.
+    // size_t es el tipo correcto para recorrer un vector por indice.
     for (std::size_t i = 0; i < infantes.size(); ++i) {
         if (infantes[i]->getIdInfante() == idInfante) {   // '->' accede a un miembro mediante un puntero
-            // erase necesita una POSICIÓN (iterador), no un número:
-            // begin() es la posición del primero; sumarle i avanza hasta el elemento i.
+            // erase necesita una POSICIÓN (iterador), no un numero:
+            // begin() es la posicion del primero; sumarle i avanza hasta el elemento i.
             infantes.erase(infantes.begin() + i);
             cantidadActual = static_cast<int>(infantes.size());
             return true;
@@ -64,8 +64,8 @@ std::shared_ptr<Infante> Guarderia::buscarInfante(const std::string& idInfante) 
     return nullptr;                   // señal de "no encontrado"
 }
 
-// POLIMORFISMO en acción: no preguntamos "¿eres de tal clase?". Le pedimos al
-// expediente su categoría (getCategoria es virtual) y comparamos el texto.
+// POLIMORFISMO en accion: no preguntamos "¿eres de tal clase?". Le pedimos al
+// expediente su categoria (getCategoria es virtual) y comparamos el texto.
 std::vector<std::shared_ptr<Infante>> Guarderia::obtenerPorCategoria(const std::string& categoria) const {
     std::vector<std::shared_ptr<Infante>> resultado;
     for (const std::shared_ptr<Infante>& inf : infantes) {
@@ -81,7 +81,7 @@ int Guarderia::contarInfantes() const {
     return cantidadActual;
 }
 
-// [SOBRECARGA 2] Infantes de una categoría.
+// [SOBRECARGA 2] Infantes de una categoria.
 int Guarderia::contarInfantes(const std::string& categoria) const {
     return static_cast<int>(obtenerPorCategoria(categoria).size());
 }
@@ -96,7 +96,7 @@ std::vector<Tutor> Guarderia::obtenerTutores() const {
             for (const Tutor& agregado : resultado) {
                 if (agregado.getIdTutor() == t.getIdTutor()) {
                     yaEsta = true;
-                    break;                        // ya lo teníamos: dejamos de buscar
+                    break;                        // ya lo teniamos: dejamos de buscar
                 }
             }
             if (!yaEsta) {

@@ -15,31 +15,31 @@ private:
     // Puntero inteligente al PADRE: puede apuntar a un Expediente_Lactante o a
     // un Expediente_Preescolar. NO puede ser un objeto por valor porque:
     //   1) Expediente_Medico es abstracta (no se pueden crear objetos de ella).
-    //   2) Guardar una hija por valor "recortaría" sus datos propios.
+    //   2) Guardar una hija por valor "recortaria" sus datos propios.
     std::shared_ptr<Expediente_Medico> expediente;
 
-    std::vector<Tutor> tutores;    // 1..*: siempre habrá al menos uno.
+    std::vector<Tutor> tutores;    // 1..*: siempre habra al menos uno.
 
 public:
-    // El constructor EXIGE un tutor: así la regla "1..*" del UML es imposible de
+    // El constructor EXIGE un tutor: asi la regla "1..*" del UML es imposible de
     // romper: no se puede crear un infante sin tutor.
     Infante(const std::string& idInfante,
             const std::string& nombreCompleto,
             const Tutor& tutorPrincipal,
             const std::shared_ptr<Expediente_Medico>& expediente);
 
-    // Devuelve true si el estatus es válido y se aplicó; false si no.
+    // Devuelve true si el estatus es valido y se aplico; false si no.
     bool actualizarEstatus(const std::string& estatus);
 
     // Devuelve una REFERENCIA (&) al expediente real: lo que modifiques con
-    // ella modifica el expediente del infante (una copia no serviría).
-    // La versión 'const' permite consultar el expediente de un infante de solo lectura.
+    // ella modifica el expediente del infante (una copia no serviria).
+    // La version 'const' permite consultar el expediente de un infante de solo lectura.
     Expediente_Medico& getExpediente();
     const Expediente_Medico& getExpediente() const;
 
         // ----- Tutores (multiplicidad 1..*: siempre debe quedar al menos uno) -----
     // Todas devuelven bool: true si se hizo el cambio, false si se rechazo.
-    bool agregarTutor(const Tutor& tutor);        // rechaza ids repetidos y formatos inválidos
+    bool agregarTutor(const Tutor& tutor);        // rechaza ids repetidos y formatos invalidos
     bool eliminarTutor(const std::string& idTutor);   // rechaza si es el unico tutor
     bool reemplazarTutor(const std::string& idTutorActual, const Tutor& tutorNuevo);
 

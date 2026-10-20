@@ -18,7 +18,7 @@ private:
     float temperatura;
     bool estadoSaludAdecuado;             // resultado guardado por iniciarProceso()
     SeveridadIrregularidad severidad;     // Ninguna = no presenta irregularidades
-    std::string descripcionIrregularidad; // qué irregularidad es (vacío si no hay)
+    std::string descripcionIrregularidad; // que irregularidad es (vacio si no hay)
 public:
     Ficha_Medica(const std::string &idProceso,
                  const std::string &fecha,

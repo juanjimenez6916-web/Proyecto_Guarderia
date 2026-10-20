@@ -8,7 +8,7 @@ Registro::Registro(const std::string& idProceso,
       observaciones(""),          // empieza sin observaciones
       infante(infante)
 {
-    // Supuesto: 'infante' no es nulo (ver "limitaciones" en la recopilación).
+    // Supuesto: 'infante' no es nulo (ver "limitaciones" en la recopilacion).
 }
 
 // [SOBRECARGA 1] Solo la nota. Las notas se separan con "; ".
@@ -26,7 +26,7 @@ void Registro::agregarObservaciones(const std::string& nota,
     agregarObservaciones(autor + ": " + nota);
 }
 
-// Reporte BASE (parte común a todos los registros). Las hijas lo llaman con
+// Reporte BASE (parte comun a todos los registros). Las hijas lo llaman con
 // Registro::generarReporte() y le agregan lo suyo.
 std::string Registro::generarReporte() const {
     std::string reporte = "Proceso " + idProceso +

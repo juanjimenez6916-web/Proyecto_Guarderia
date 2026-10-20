@@ -9,9 +9,9 @@ Ingreso_Guarderia::Ingreso_Guarderia(const std::string &idProceso,
 {
 }
 
-// [SOBRESCRITURA] Aquí "iniciar el proceso" = abrir el trámite de ingreso.
-// (No recibe la ficha porque el UML no tiene parámetros: la decisión se toma
-// después, en validarAcceso()).
+// [SOBRESCRITURA] Aqui "iniciar el proceso" = abrir el tramite de ingreso.
+// (No recibe la ficha porque el UML no tiene parametros: la decision se toma
+// despues, en validarAcceso()).
 void Ingreso_Guarderia::iniciarProceso()
 {
     ingresoAprobado = false;
@@ -21,7 +21,7 @@ void Ingreso_Guarderia::iniciarProceso()
     agregarObservaciones("Proceso de ingreso iniciado");
 }
 
-// Decide el ingreso. Cada comprobación que falla guarda el motivo, rechaza y sale.
+// Decide el ingreso. Cada comprobacion que falla guarda el motivo, rechaza y sale.
 bool Ingreso_Guarderia::validarAcceso(const Ficha_Medica &ficha)
 {
     // 1) La ficha debe pertenecer a ESTE infante (la identidad se verifica antes que la salud).
@@ -65,7 +65,7 @@ bool Ingreso_Guarderia::validarAcceso(const Ficha_Medica &ficha)
     return true;
 }
 
-// Único punto de rechazo: así no se repite este código en cada comprobación.
+// Unico punto de rechazo: asi no se repite este codigo en cada comprobacion.
 void Ingreso_Guarderia::rechazarYActualizarEstatus()
 {
     ingresoAprobado = false;

@@ -1,7 +1,7 @@
 #include "Infante.h"
 #include "Validaciones.h"   // reglas de formato (ids y telefonos)
 
-// CONSTRUCTOR. El orden de la lista de inicialización coincide con el orden de
+// CONSTRUCTOR. El orden de la lista de inicializacion coincide con el orden de
 // declaración de los atributos (C++ inicializa SIEMPRE en el orden de declaración).
 Infante::Infante(const std::string& idInfante,
                  const std::string& nombreCompleto,
@@ -15,15 +15,15 @@ Infante::Infante(const std::string& idInfante,
     tutores.push_back(tutorPrincipal);   // cumple la multiplicidad 1..*
 }
 
-// Solo acepta los tres estatus válidos. Devuelve false (y NO cambia nada) si no.
+// Solo acepta los tres estatus validos. Devuelve false (y NO cambia nada) si no.
 bool Infante::actualizarEstatus(const std::string& estatus) {
-    //Los string distinguen mayúsculas: "aceptado" != "Aceptado".
+    //Los string distinguen mayusculas: "aceptado" != "Aceptado".
     bool esValido = (estatus == "Pendiente" ||
                      estatus == "Aceptado"  ||
                      estatus == "Rechazado");
 
     if (!esValido) {
-        return false;                  // "guard clause": salimos temprano si algo está mal
+        return false;                  // "guard clause": salimos temprano si algo esta mal
     }
     estatusActual = estatus;
     return true;
@@ -35,7 +35,7 @@ Expediente_Medico& Infante::getExpediente() { return *expediente; }
 const Expediente_Medico& Infante::getExpediente() const { return *expediente; }
 
 // Busca un tutor por id. Devuelve la direccion del tutor dentro del vector (o
-// nullptr si no está). '&t' = "la dirección de t".
+// nullptr si no esta). '&t' = "la dirección de t".
 const Tutor* Infante::buscarTutor(const std::string& idTutor) const {
     for (const Tutor& t : tutores) {
         if (t.getIdTutor() == idTutor) {
@@ -63,34 +63,34 @@ bool Infante::agregarTutor(const Tutor& tutor) {
 }
 
 // Elimina un tutor. La multiplicidad 1..* del UML exige que SIEMPRE quede al
-// menos uno, así que se rechaza si es el u nico (para eso existe reemplazarTutor).
+// menos uno, asi que se rechaza si es el u nico (para eso existe reemplazarTutor).
 bool Infante::eliminarTutor(const std::string& idTutor) {
     if (tutores.size() <= 1) {
         return false;
     }
     for (std::size_t i = 0; i < tutores.size(); ++i) {
         if (tutores[i].getIdTutor() == idTutor) {
-            tutores.erase(tutores.begin() + i);   // erase pide una POSICIÓN, no un número
+            tutores.erase(tutores.begin() + i);   // erase pide una POSICION, no un numero
             return true;
         }
     }
     return false;                                 // no estaba
 }
 
-// Reemplaza un tutor por otro, en la MISMA posición de la lista.
-// Como no cambia la cantidad de tutores, funciona también con el único tutor.
+// Reemplaza un tutor por otro, en la MISMA posicion de la lista.
+// Como no cambia la cantidad de tutores, funciona tambien con el unico tutor.
 bool Infante::reemplazarTutor(const std::string& idTutorActual, const Tutor& tutorNuevo) {
     if (!esIdTutorValido(tutorNuevo.getIdTutor()) || !esTelefonoValido(tutorNuevo.getTelefono())) {
         return false;
     }
     // El id nuevo no puede coincidir con OTRO tutor de este infante
-    // (sí puede ser el mismo id: sería actualizar los datos de ese tutor).
+    // (si puede ser el mismo id: seria actualizar los datos de ese tutor).
     if (tutorNuevo.getIdTutor() != idTutorActual && tieneTutor(tutorNuevo.getIdTutor())) {
         return false;
     }
     for (Tutor& t : tutores) {                    // 'Tutor&': el tutor REAL, no una copia
         if (t.getIdTutor() == idTutorActual) {
-            t = tutorNuevo;                       // la asignación reemplaza todo su contenido
+            t = tutorNuevo;                       // la asignacion reemplaza todo su contenido
             return true;
         }
     }

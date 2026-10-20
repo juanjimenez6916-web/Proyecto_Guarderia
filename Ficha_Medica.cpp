@@ -23,7 +23,7 @@ bool Ficha_Medica::evaluacionSalud() const
     return evaluacionSalud(37.5f); // la 'f' indica que es un float, no un double
 }
 
-// [SOBRECARGA 2] Esta sano si NO tiene golpes Y la temperatura es menor al límite.
+// [SOBRECARGA 2] Esta sano si NO tiene golpes Y la temperatura es menor al limite.
 // "!" = NO,  "&&" = Y.
 bool Ficha_Medica::evaluacionSalud(float limiteTemperatura) const
 {
