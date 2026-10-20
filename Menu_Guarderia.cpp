@@ -7,23 +7,23 @@
 #include "Ingreso_Guarderia.h"
 #include "Validaciones.h"
 
-// ---------------------------------------------------------------------
+
 //  1) DETALLES INTERNOS
 //  Un namespace SIN nombre hace que todo lo de adentro sea visible solo en
 //  este archivo (como si fuera "privado" del .cpp).
 // ---------------------------------------------------------------------
 namespace {
 
-// Cuántos infantes caben en la guardería. Cámbialo aquí si quieres otro límite.
+// Cuantos infantes caben en la guarderia. Cambialo aqui si quieres otro limite.
 // (Se muestra siempre en el menú y al inscribir, para que nunca sea un misterio.)
-const int CAPACIDAD_MAXIMA = 10;
+const int CAPACIDAD_MAXIMA = 30;
 
 // ---- Entrada de datos ------------------------------------------------
 // Todo se lee con std::getline y luego se convierte con stoi/stof.
-// ¿Por qué? Mezclar "cin >> numero" con getline deja un salto de línea
+// ¿Por qué? Mezclar "cin >> numero" con getline deja un salto de linea
 // pendiente en el teclado que hace que se salten preguntas.
 
-// Muestra un mensaje y lee una línea completa de texto.
+// Muestra un mensaje y lee una linea completa de texto.
 // recortar() quita los espacios sobrantes del inicio y del final.
 std::string leerTexto(const std::string& mensaje) {
     std::cout << mensaje;
@@ -32,22 +32,22 @@ std::string leerTexto(const std::string& mensaje) {
     return recortar(texto);
 }
 
-// Repite la pregunta hasta que el usuario escriba un entero válido.
+// Repite la pregunta hasta que el usuario escriba un entero valido.
 int leerEntero(const std::string& mensaje) {
     while (true) {
         std::string texto = leerTexto(mensaje);
         if (!std::cin) {
-            return 0;                     // la entrada se cerró: salimos del ciclo
+            return 0;                     // la entrada se cerro: salimos del ciclo
         }
         try {
-            return std::stoi(texto);      // lanza excepción si no es un número
+            return std::stoi(texto);      // lanza excepcion si no es un número
         } catch (const std::exception&) {
             std::cout << "Valor invalido. Intenta de nuevo.\n";
         }
     }
 }
 
-// Igual, pero para números con decimales.
+// Igual, pero para numeros con decimales.
 float leerDecimal(const std::string& mensaje) {
     while (true) {
         std::string texto = leerTexto(mensaje);
@@ -62,7 +62,7 @@ float leerDecimal(const std::string& mensaje) {
     }
 }
 
-// Pregunta de sí/no: devuelve true si la respuesta empieza con 's' o 'S'.
+// Pregunta de si/no: devuelve true si la respuesta empieza con 's' o 'S'.
 bool leerSiNo(const std::string& mensaje) {
     std::string texto = leerTexto(mensaje);
     return !texto.empty() && (texto[0] == 's' || texto[0] == 'S');
