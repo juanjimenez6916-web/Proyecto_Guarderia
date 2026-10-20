@@ -3,7 +3,7 @@
 #include <cctype>      // std::toupper
 
 // --- Reglas ---
-const int DIGITOS_ID = 4;          // I-0001 y T-0001 llevan 4 dígitos
+const int DIGITOS_ID = 4;          // I-0001 y T-0001 llevan 4 digitos
 const int DIGITOS_TELEFONO = 10;   // telefono de 10 digitos
 
 // true si el texto NO esta vacio y TODOS sus caracteres son digitos '0'..'9'.
