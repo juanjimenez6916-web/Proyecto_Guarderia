@@ -1,10 +1,20 @@
 #pragma once
 #include <string>
-#include <cctype>      // std::toupper
+#include <cctype>      // std::toupper, std::isalpha, std::isdigit
+#include <cmath>       // std::isfinite
 
 // --- Reglas ---
 const int DIGITOS_ID = 4;          // I-0001 y T-0001 llevan 4 digitos
 const int DIGITOS_TELEFONO = 10;   // telefono de 10 digitos
+
+// --- Rangos reales para infantes en guarderia ---
+const int EDAD_LACTANTE_MIN = 1;       // 1 a 24 meses
+const int EDAD_LACTANTE_MAX = 24;
+const float PESO_LACTANTE_MIN = 2.0f;  // 2.0 kg a 25.0 kg
+const float PESO_LACTANTE_MAX = 35.0f;
+
+const int EDAD_PREESCOLAR_MIN = 2;     // 2 a 6 anios
+const int EDAD_PREESCOLAR_MAX = 4;
 
 // true si el texto NO esta vacio y TODOS sus caracteres son digitos '0'..'9'.
 inline bool soloDigitos(const std::string& texto) { // inline: es una palabra clave que se coloca antes de una funcion
@@ -75,4 +85,40 @@ inline std::string recortar(const std::string& texto) {
     }
     std::size_t fin = texto.find_last_not_of(espacios);       // ultimo caracter que NO es espacio
     return texto.substr(inicio, fin - inicio + 1);
+}
+
+// ---- Validaciones de nombres, edades y pesos --------------------------
+
+// Valida que tenga al menos 2 caracteres, contenga letras (incluyendo acentos/enies)
+// y NO tenga numeros ni delimitadores ('|', ';') que rompan el formato de texto.
+inline bool esNombreValido(const std::string& nombre) {
+    std::string limpio = recortar(nombre);
+    if (limpio.size() < 2) {
+        return false;
+    }
+    bool tieneLetra = false;
+    for (char c : limpio) {
+        unsigned char uc = static_cast<unsigned char>(c);
+        if (std::isdigit(uc)) {
+            return false;
+        }
+        if (std::isalpha(uc) || uc >= 128) {   // letras ASCII o caracteres UTF-8 (acentos/enies)
+            tieneLetra = true;
+        } else if (c != ' ' && c != '-' && c != '\'' && c != '.') {
+            return false;                      // rechaza simbolos como '|', ';', '@', etc.
+        }
+    }
+    return tieneLetra;
+}
+
+inline bool esEdadLactanteValida(int edadMeses) {
+    return edadMeses >= EDAD_LACTANTE_MIN && edadMeses <= EDAD_LACTANTE_MAX;
+}
+
+inline bool esPesoLactanteValido(float pesoKg) {
+    return std::isfinite(pesoKg) && pesoKg >= PESO_LACTANTE_MIN && pesoKg <= PESO_LACTANTE_MAX;
+}
+
+inline bool esEdadPreescolarValida(int edadAnios) {
+    return edadAnios >= EDAD_PREESCOLAR_MIN && edadAnios <= EDAD_PREESCOLAR_MAX;
 }

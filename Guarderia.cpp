@@ -1,5 +1,5 @@
 #include "Guarderia.h"
-#include "Validaciones.h"   // reglas de formato (ids y telefonos)
+#include "Validaciones.h"   // reglas de formato (ids, nombres y telefonos)
 
 Guarderia::Guarderia(const std::string& nombreGuarderia, int capacidadMaxima)
     : nombreGuarderia(nombreGuarderia),
@@ -20,11 +20,14 @@ bool Guarderia::inscribirInfante(const std::shared_ptr<Infante>& infante) {
     // RED DE SEGURIDAD: el menu ya valida lo que escribe el usuario, pero la
     // guarderia tambien rechaza datos con mal formato (asi nadie puede colarlos
     // creando infantes por otro camino).
-    if (!esIdInfanteValido(infante->getIdInfante())) {
+    if (!esIdInfanteValido(infante->getIdInfante()) ||
+        !esNombreValido(infante->getNombreCompleto())) {
         return false;
     }
     for (const Tutor& t : infante->getTutores()) {
-        if (!esIdTutorValido(t.getIdTutor()) || !esTelefonoValido(t.getTelefono())) {
+        if (!esIdTutorValido(t.getIdTutor()) ||
+            !esNombreValido(t.getNombre()) ||
+            !esTelefonoValido(t.getTelefono())) {
             return false;
         }
     }

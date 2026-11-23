@@ -1,6 +1,8 @@
 #include "Expediente_Lactante.h"
+#include "Validaciones.h"
 #include <sstream>    // std::ostringstream: un "cout" que escribe dentro de un texto
 #include <iomanip>    // std::setprecision
+#include <stdexcept>  // std::invalid_argument
 
 // CONSTRUCTOR de una hija: lo primero en la lista de inicializacion es
 // construir la PARTE DEL PADRE llamando a su constructor.
@@ -13,6 +15,9 @@ Expediente_Lactante::Expediente_Lactante(const std::string& idExpediente,
       tipoAlimentacion(tipoAlimentacion),
       pesoKg(pesoKg)
 {
+    if (!esEdadLactanteValida(edadMeses) || !esPesoLactanteValido(pesoKg)) {
+        throw std::invalid_argument("Edad en meses o peso fuera de rango para lactante.");
+    }
 }
 
 // [SOBRESCRITURA] Cada hija responde con su propia categoria.
@@ -39,9 +44,9 @@ void Expediente_Lactante::escribir(std::ostream& os) const {
     os << '|' << edadMeses << '|' << tipoAlimentacion << '|' << pesoKg;
 }
 
-// [SOBRECARGA 1] Solo actualiza el peso (valida que sea positivo).
+// [SOBRECARGA 1] Solo actualiza el peso (valida que este en rango).
 void Expediente_Lactante::actualizarPeso(float nuevoPeso) {
-    if (nuevoPeso > 0) {
+    if (esPesoLactanteValido(nuevoPeso)) {
         pesoKg = nuevoPeso;
     }
 }
@@ -49,7 +54,7 @@ void Expediente_Lactante::actualizarPeso(float nuevoPeso) {
 // [SOBRECARGA 2] Peso y edad a la vez. Reutiliza la version de un parametro.
 void Expediente_Lactante::actualizarPeso(float nuevoPeso, int nuevaEdadMeses) {
     actualizarPeso(nuevoPeso);
-    if (nuevaEdadMeses > 0) {
+    if (esEdadLactanteValida(nuevaEdadMeses)) {
         edadMeses = nuevaEdadMeses;
     }
 }

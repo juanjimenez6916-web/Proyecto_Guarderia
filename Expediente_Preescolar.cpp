@@ -1,4 +1,6 @@
 #include "Expediente_Preescolar.h"
+#include "Validaciones.h"
+#include <stdexcept>  // std::invalid_argument
 
 Expediente_Preescolar::Expediente_Preescolar(const std::string& idExpediente,
                                              int edadAnios,
@@ -9,6 +11,9 @@ Expediente_Preescolar::Expediente_Preescolar(const std::string& idExpediente,
       controlaEsfinteres(controlaEsfinteres),
       salaAsignada(salaAsignada)
 {
+    if (!esEdadPreescolarValida(edadAnios)) {
+        throw std::invalid_argument("Edad en anios fuera de rango para preescolar.");
+    }
 }
 
 // [SOBRESCRITURA]
@@ -33,15 +38,17 @@ void Expediente_Preescolar::escribir(std::ostream& os) const {
 
 // [SOBRECARGA 1]
 void Expediente_Preescolar::actualizarEdad(int nuevaEdad) {
-    if (nuevaEdad > 0) {
+    if (esEdadPreescolarValida(nuevaEdad)) {
         edadAnios = nuevaEdad;
     }
 }
 
 // [SOBRECARGA 2] Al cambiar de edad tambien puede cambiar de sala.
 void Expediente_Preescolar::actualizarEdad(int nuevaEdad, const std::string& nuevaSala) {
-    actualizarEdad(nuevaEdad);
-    salaAsignada = nuevaSala;
+    if (esEdadPreescolarValida(nuevaEdad) && !recortar(nuevaSala).empty()) {
+        edadAnios = nuevaEdad;
+        salaAsignada = recortar(nuevaSala);
+    }
 }
 
 int Expediente_Preescolar::getEdadAnios() const { return edadAnios; }

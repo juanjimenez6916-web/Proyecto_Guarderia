@@ -1,5 +1,5 @@
 #include "Infante.h"
-#include "Validaciones.h"   // reglas de formato (ids y telefonos)
+#include "Validaciones.h"   // reglas de formato (ids, nombres y telefonos)
 
 // CONSTRUCTOR. El orden de la lista de inicializacion coincide con el orden de
 // declaracion de los atributos (C++ inicializa SIEMPRE en el orden de declaracion).
@@ -54,7 +54,9 @@ bool Infante::tieneTutor(const std::string& idTutor) const {
 // Agrega un tutor ADICIONAL. Se rechaza si el formato es invalido o si ese id
 // ya es tutor de este infante.
 bool Infante::agregarTutor(const Tutor& tutor) {
-    if (!esIdTutorValido(tutor.getIdTutor()) || !esTelefonoValido(tutor.getTelefono())) {
+    if (!esIdTutorValido(tutor.getIdTutor()) ||
+        !esNombreValido(tutor.getNombre()) ||
+        !esTelefonoValido(tutor.getTelefono())) {
         return false;
     }
     if (tieneTutor(tutor.getIdTutor())) {
@@ -82,7 +84,9 @@ bool Infante::eliminarTutor(const std::string& idTutor) {
 // Reemplaza un tutor por otro, en la MISMA posicion de la lista.
 // Como no cambia la cantidad de tutores, funciona tambien con el unico tutor.
 bool Infante::reemplazarTutor(const std::string& idTutorActual, const Tutor& tutorNuevo) {
-    if (!esIdTutorValido(tutorNuevo.getIdTutor()) || !esTelefonoValido(tutorNuevo.getTelefono())) {
+    if (!esIdTutorValido(tutorNuevo.getIdTutor()) ||
+        !esNombreValido(tutorNuevo.getNombre()) ||
+        !esTelefonoValido(tutorNuevo.getTelefono())) {
         return false;
     }
     // El id nuevo no puede coincidir con OTRO tutor de este infante
@@ -98,8 +102,8 @@ bool Infante::reemplazarTutor(const std::string& idTutorActual, const Tutor& tut
     }
     return false;                                 // el tutor a reemplazar no existe
 }
-const std::vector<Tutor>& Infante::getTutores() const { return tutores; }
 
+const std::vector<Tutor>& Infante::getTutores() const { return tutores; }
 std::string Infante::getIdInfante() const { return idInfante; }
 std::string Infante::getNombreCompleto() const { return nombreCompleto; }
 std::string Infante::getEstatusActual() const { return estatusActual; }
@@ -114,11 +118,9 @@ std::ostream& operator<<(std::ostream& os, const Infante& infante) {
     os << "INFANTE|" << infante.getIdInfante() << '|'
        << infante.getNombreCompleto() << '|'
        << infante.getEstatusActual() << '\n';
-
     for (const Tutor& t : infante.getTutores()) {
         os << "T|" << t << '\n';                  // usa el operator<< de Tutor
     }
-
     // Usa el operator<< de Expediente_Medico, que llama al escribir() VIRTUAL:
     // escribe los datos de la hija correcta (Lactante o Preescolar).
     os << "E|" << infante.getExpediente() << '\n';

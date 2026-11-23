@@ -1,13 +1,14 @@
 #include "MenuGuarderia.h"
 #include <iostream>
 #include <ctime>       // fecha actual
+#include <cmath>       // std::isfinite
+#include <stdexcept>   // std::invalid_argument
 #include "Expediente_Lactante.h"
 #include "Expediente_Preescolar.h"
 #include "Ficha_Medica.h"
 #include "Ingreso_Guarderia.h"
 #include "Salida_Emergencia.h"  // [ACTUALIZACION: Inclusion de Salida_Emergencia]
 #include "Validaciones.h"
-
 
 //  1) DETALLES INTERNOS
 //  Un namespace SIN nombre hace que todo lo de adentro sea visible solo en
@@ -33,7 +34,7 @@ std::string leerTexto(const std::string& mensaje) {
     return recortar(texto);
 }
 
-// Repite la pregunta hasta que el usuario escriba un entero valido.
+// Repite la pregunta hasta que el usuario escriba un entero valido (sin basura al final).
 int leerEntero(const std::string& mensaje) {
     while (true) {
         std::string texto = leerTexto(mensaje);
@@ -41,14 +42,19 @@ int leerEntero(const std::string& mensaje) {
             return 0;                     // la entrada se cerro: salimos del ciclo
         }
         try {
-            return std::stoi(texto);      // lanza excepcion si no es un numero
+            std::size_t procesados = 0;
+            int valor = std::stoi(texto, &procesados);
+            if (procesados != texto.size()) {
+                throw std::invalid_argument("Caracteres extra");
+            }
+            return valor;                 // lanza excepcion si no es un numero
         } catch (const std::exception&) {
             std::cout << "Valor invalido. Intenta de nuevo.\n";
         }
     }
 }
 
-// Igual, pero para numeros con decimales.
+// Igual, pero para numeros con decimales (rechaza "nan", "inf" y letras al final).
 float leerDecimal(const std::string& mensaje) {
     while (true) {
         std::string texto = leerTexto(mensaje);
@@ -56,7 +62,12 @@ float leerDecimal(const std::string& mensaje) {
             return 0;
         }
         try {
-            return std::stof(texto);
+            std::size_t procesados = 0;
+            float valor = std::stof(texto, &procesados);
+            if (procesados != texto.size() || !std::isfinite(valor)) {
+                throw std::invalid_argument("Formato decimal invalido");
+            }
+            return valor;
         } catch (const std::exception&) {
             std::cout << "Valor invalido. Intenta de nuevo.\n";
         }
@@ -89,7 +100,7 @@ bool leerSiNo(const std::string& mensaje) {
 }
 
 // ---- Lecturas CON VALIDACION -------------------------------------------
-// Las tres siguen la misma idea: repiten la pregunta hasta que el dato tenga
+// Las siguientes siguen la misma idea: repiten la pregunta hasta que el dato tenga
 // el formato correcto. Si el usuario deja la linea VACIA devuelven "" y quien
 // las llamo interpreta eso como "cancelar" (asi nadie queda atrapado en un
 // ciclo). Tambien devuelven "" si la entrada se cerro.
@@ -130,6 +141,53 @@ std::string leerTelefono(const std::string& mensaje) {
     }
 }
 
+// Nombre o parentesco: solo letras y espacios, sin numeros ni simbolos.
+std::string leerNombre(const std::string& mensaje) {
+    while (true) {
+        std::string nombre = leerTexto(mensaje);
+        if (nombre.empty() || esNombreValido(nombre)) {
+            return nombre;
+        }
+        std::cout << "  Nombre invalido. Usa solo letras y espacios (minimo 2 caracteres, sin numeros). Deja vacio para cancelar.\n";
+    }
+}
+
+// Edad de lactante: entre EDAD_LACTANTE_MIN y EDAD_LACTANTE_MAX meses.
+int leerEdadLactante(const std::string& mensaje) {
+    while (true) {
+        int meses = leerEntero(mensaje);
+        if (!std::cin || esEdadLactanteValida(meses)) {
+            return meses;
+        }
+        std::cout << "  Edad invalida para lactante (" << EDAD_LACTANTE_MIN
+                  << " a " << EDAD_LACTANTE_MAX << " meses). Intenta de nuevo.\n";
+    }
+}
+
+// Peso de lactante: entre PESO_LACTANTE_MIN y PESO_LACTANTE_MAX kg.
+float leerPesoLactante(const std::string& mensaje) {
+    while (true) {
+        float peso = leerDecimal(mensaje);
+        if (!std::cin || esPesoLactanteValido(peso)) {
+            return peso;
+        }
+        std::cout << "  Peso invalido para lactante (" << PESO_LACTANTE_MIN
+                  << " a " << PESO_LACTANTE_MAX << " kg). Intenta de nuevo.\n";
+    }
+}
+
+// Edad de preescolar: entre EDAD_PREESCOLAR_MIN y EDAD_PREESCOLAR_MAX anios.
+int leerEdadPreescolar(const std::string& mensaje) {
+    while (true) {
+        int anios = leerEntero(mensaje);
+        if (!std::cin || esEdadPreescolarValida(anios)) {
+            return anios;
+        }
+        std::cout << "  Edad invalida para preescolar (" << EDAD_PREESCOLAR_MIN
+                  << " a " << EDAD_PREESCOLAR_MAX << " anios). Intenta de nuevo.\n";
+    }
+}
+
 // Gravedad de una irregularidad. Devuelve Ninguna si el usuario escribe 0 (= cancelar)
 // o si la entrada se cerro; asi este ciclo nunca queda atrapado.
 SeveridadIrregularidad leerSeveridad(const std::string& mensaje) {
@@ -156,12 +214,18 @@ bool capturarTutor(Tutor& destino) {
     if (idTutor.empty()) {
         return false;
     }
-    std::string nombre = leerTexto("  Nombre: ");
-    std::string telefono = leerTelefono("  Telefono (" + std::to_string(DIGITOS_TELEFONO) + " digitos): ");
-    if (nombre.empty() || telefono.empty()) {
+    std::string nombre = leerNombre("  Nombre: ");
+    if (nombre.empty()) {
         return false;
     }
-    std::string parentesco = leerTexto("  Parentesco: ");
+    std::string telefono = leerTelefono("  Telefono (" + std::to_string(DIGITOS_TELEFONO) + " digitos): ");
+    if (telefono.empty()) {
+        return false;
+    }
+    std::string parentesco = leerNombre("  Parentesco: ");
+    if (parentesco.empty()) {
+        return false;
+    }
     destino = Tutor(idTutor, nombre, telefono, parentesco);
     return true;
 }
@@ -236,6 +300,7 @@ void MenuGuarderia::opcionInscribir() {
                   << guarderia.getCapacidadMaxima() << "). Elimina un infante (opcion 7) para liberar un cupo.\n";
         return;
     }
+
     std::cout << "Cupos libres: " << guarderia.getCapacidadMaxima() - guarderia.contarInfantes()
               << " de " << guarderia.getCapacidadMaxima() << ". (Deja un dato vacio para cancelar.)\n";
 
@@ -248,7 +313,8 @@ void MenuGuarderia::opcionInscribir() {
         std::cout << "Ya existe un infante con ese id.\n";
         return;
     }
-    std::string nombre = leerTexto("Nombre completo: ");
+
+    std::string nombre = leerNombre("Nombre completo: ");
     if (nombre.empty()) {
         std::cout << "Inscripcion cancelada.\n";
         return;
@@ -277,6 +343,10 @@ void MenuGuarderia::opcionInscribir() {
                       << "). No se inscribio.\n";
             return;
         }
+        if (!esNombreValido(tutor.getNombre())) {
+            std::cout << "Nombre de tutor invalido. No se inscribio.\n";
+            return;
+        }
         if (!esTelefonoValido(tutor.getTelefono())) {
             std::cout << "Telefono invalido (deben ser exactamente " << DIGITOS_TELEFONO
                       << " digitos, solo numeros). No se inscribio.\n";
@@ -292,13 +362,21 @@ void MenuGuarderia::opcionInscribir() {
             std::cout << "Inscripcion cancelada.\n";
             return;
         }
-        std::string nombreTutor = leerTexto("  Nombre: ");
-        std::string telefono = leerTelefono("  Telefono (" + std::to_string(DIGITOS_TELEFONO) + " digitos): ");
-        if (nombreTutor.empty() || telefono.empty()) {
+        std::string nombreTutor = leerNombre("  Nombre: ");
+        if (nombreTutor.empty()) {
             std::cout << "Inscripcion cancelada.\n";
             return;
         }
-        std::string parentesco = leerTexto("  Parentesco: ");
+        std::string telefono = leerTelefono("  Telefono (" + std::to_string(DIGITOS_TELEFONO) + " digitos): ");
+        if (telefono.empty()) {
+            std::cout << "Inscripcion cancelada.\n";
+            return;
+        }
+        std::string parentesco = leerNombre("  Parentesco: ");
+        if (parentesco.empty()) {
+            std::cout << "Inscripcion cancelada.\n";
+            return;
+        }
         tutor = Tutor(idTutor, nombreTutor, telefono, parentesco);   // reemplaza el tutor en blanco
     }
 
@@ -307,14 +385,24 @@ void MenuGuarderia::opcionInscribir() {
 
     // Puntero al PADRE: apuntara a una hija u otra segun lo que elija el usuario.
     std::shared_ptr<Expediente_Medico> expediente;
-
     if (tipo == 1) {
-        int meses = leerEntero("Edad en meses: ");
+        int meses = leerEdadLactante("Edad en meses (" + std::to_string(EDAD_LACTANTE_MIN) +
+                                     " a " + std::to_string(EDAD_LACTANTE_MAX) + "): ");
+        if (!std::cin) {
+            return;
+        }
         std::string alimentacion = leerTexto("Alimentacion (materna/formula/mixta): ");
-        float peso = leerDecimal("Peso en kg: ");
+        float peso = leerPesoLactante("Peso en kg (2.0 a 25.0): ");
+        if (!std::cin) {
+            return;
+        }
         expediente = std::make_shared<Expediente_Lactante>(idExpediente, meses, alimentacion, peso);
     } else if (tipo == 2) {
-        int anios = leerEntero("Edad en anios: ");
+        int anios = leerEdadPreescolar("Edad en anios (" + std::to_string(EDAD_PREESCOLAR_MIN) +
+                                       " a " + std::to_string(EDAD_PREESCOLAR_MAX) + "): ");
+        if (!std::cin) {
+            return;
+        }
         bool esfinteres = leerSiNo("Controla esfinteres? (s/n): ");
         std::string sala = leerTexto("Sala asignada: ");
         expediente = std::make_shared<Expediente_Preescolar>(idExpediente, anios, esfinteres, sala);
@@ -397,6 +485,7 @@ void MenuGuarderia::opcionIngreso() {
         std::cout << "No se encontro ese infante.\n";
         return;
     }
+
     bool golpes = leerSiNo("Presenta golpes? (s/n): ");
     float temperatura = leerTemperatura("Temperatura en C: ");
 
@@ -420,6 +509,7 @@ void MenuGuarderia::opcionIngreso() {
 
     ++contadorRegistros;                             // numero consecutivo para los ids de los registros
     std::string fecha = fechaHoy();
+
     // Ambos registros apuntan al MISMO infante de la guarderia.
     std::shared_ptr<Ficha_Medica> ficha = std::make_shared<Ficha_Medica>(
         "F-" + std::to_string(contadorRegistros), fecha, inf, golpes, temperatura);
@@ -665,7 +755,6 @@ void MenuGuarderia::opcionSalidaEmergencia() {
         std::cout << "No se encontro ese infante en la guarderia.\n";
         return;
     }
-
     std::string motivo = leerTexto("Motivo / explicacion de la salida de emergencia: ");
     if (motivo.empty()) {
         std::cout << "Salida de emergencia cancelada.\n";
@@ -676,7 +765,6 @@ void MenuGuarderia::opcionSalidaEmergencia() {
     std::string fecha = fechaHoy();
     std::shared_ptr<Salida_Emergencia> salida = std::make_shared<Salida_Emergencia>(
         "E-" + std::to_string(contadorRegistros), fecha, inf, motivo);
-
     salida->iniciarProceso();
     historial.push_back(salida);
 
@@ -714,12 +802,10 @@ void MenuGuarderia::menuTutores() {
 // EL CICLO DEL MENU: se repite hasta que el usuario elige 0.
 void MenuGuarderia::ejecutar() {
     int opcion = -1;
-
     while (opcion != 0) {
         mostrarMenu();
         opcion = leerEntero("Elige una opcion: ");
         std::cout << "\n";
-
         switch (opcion) {                // switch: elige un caso segun el valor de 'opcion'
             case 1: opcionInscribir(); break;
             case 2: opcionListar(); break;
