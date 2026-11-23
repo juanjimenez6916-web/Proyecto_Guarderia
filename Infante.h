@@ -10,7 +10,7 @@ class Infante {
 private:
     std::string idInfante;
     std::string nombreCompleto;
-    std::string estatusActual;     // "Pendiente", "Aceptado" o "Rechazado"
+    std::string estatusActual;     // "Pendiente", "Aceptado", "Rechazado" o "Salida de Emergencia"
 
     // Puntero inteligente al PADRE: puede apuntar a un Expediente_Lactante o a
     // un Expediente_Preescolar. NO puede ser un objeto por valor porque:
@@ -29,6 +29,7 @@ public:
             const std::shared_ptr<Expediente_Medico>& expediente);
 
     // Devuelve true si el estatus es valido y se aplico; false si no.
+    // [ACTUALIZACION]: Ahora se admite el estatus "Salida de Emergencia".
     bool actualizarEstatus(const std::string& estatus);
 
     // Devuelve una REFERENCIA (&) al expediente real: lo que modifiques con
@@ -37,7 +38,7 @@ public:
     Expediente_Medico& getExpediente();
     const Expediente_Medico& getExpediente() const;
 
-        // ----- Tutores (multiplicidad 1..*: siempre debe quedar al menos uno) -----
+    // ----- Tutores (multiplicidad 1..*: siempre debe quedar al menos uno) -----
     // Todas devuelven bool: true si se hizo el cambio, false si se rechazo.
     bool agregarTutor(const Tutor& tutor);        // rechaza ids repetidos y formatos invalidos
     bool eliminarTutor(const std::string& idTutor);   // rechaza si es el unico tutor

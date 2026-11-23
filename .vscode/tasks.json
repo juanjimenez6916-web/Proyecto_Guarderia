@@ -18,6 +18,7 @@
                 "${workspaceFolder}\\Ficha_Medica.cpp",
                 "${workspaceFolder}\\Ingreso_Guarderia.cpp",
                 "${workspaceFolder}\\Menu_Guarderia.cpp",
+                "${workspaceFolder}\\Salida_Emergencia.cpp",
                 "-o",
                 "${workspaceFolder}\\guarderia.exe"
             ],

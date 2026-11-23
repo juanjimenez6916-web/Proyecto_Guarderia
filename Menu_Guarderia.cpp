@@ -5,6 +5,7 @@
 #include "Expediente_Preescolar.h"
 #include "Ficha_Medica.h"
 #include "Ingreso_Guarderia.h"
+#include "Salida_Emergencia.h"  // [ACTUALIZACION: Inclusion de Salida_Emergencia]
 #include "Validaciones.h"
 
 
@@ -15,12 +16,12 @@
 namespace {
 
 // Cuantos infantes caben en la guarderia. Cambialo aqui si quieres otro limite.
-// (Se muestra siempre en el menú y al inscribir, para que nunca sea un misterio.)
+// (Se muestra siempre en el menu y al inscribir, para que nunca sea un misterio.)
 const int CAPACIDAD_MAXIMA = 30;
 
 // ---- Entrada de datos ------------------------------------------------
 // Todo se lee con std::getline y luego se convierte con stoi/stof.
-// ¿Por qué? Mezclar "cin >> numero" con getline deja un salto de linea
+// ¿Por que? Mezclar "cin >> numero" con getline deja un salto de linea
 // pendiente en el teclado que hace que se salten preguntas.
 
 // Muestra un mensaje y lee una linea completa de texto.
@@ -40,7 +41,7 @@ int leerEntero(const std::string& mensaje) {
             return 0;                     // la entrada se cerro: salimos del ciclo
         }
         try {
-            return std::stoi(texto);      // lanza excepcion si no es un número
+            return std::stoi(texto);      // lanza excepcion si no es un numero
         } catch (const std::exception&) {
             std::cout << "Valor invalido. Intenta de nuevo.\n";
         }
@@ -62,6 +63,25 @@ float leerDecimal(const std::string& mensaje) {
     }
 }
 
+// Rango razonable de temperatura corporal (en grados C). Cambialo aqui si quieres otro.
+const float TEMP_MINIMA = 30.0f;
+const float TEMP_MAXIMA = 45.0f;
+
+// Repite la pregunta hasta que la temperatura este dentro del rango.
+float leerTemperatura(const std::string& mensaje) {
+    while (true) {
+        float t = leerDecimal(mensaje);
+        if (!std::cin) {
+            return 0;                          // la entrada se cerro: salimos del ciclo
+        }
+        if (t >= TEMP_MINIMA && t <= TEMP_MAXIMA) {
+            return t;
+        }
+        std::cout << "  Temperatura fuera de rango (" << TEMP_MINIMA << " a "
+                  << TEMP_MAXIMA << " C). Intenta de nuevo.\n";
+    }
+}
+
 // Pregunta de si/no: devuelve true si la respuesta empieza con 's' o 'S'.
 bool leerSiNo(const std::string& mensaje) {
     std::string texto = leerTexto(mensaje);
@@ -70,7 +90,7 @@ bool leerSiNo(const std::string& mensaje) {
 
 // ---- Lecturas CON VALIDACION -------------------------------------------
 // Las tres siguen la misma idea: repiten la pregunta hasta que el dato tenga
-// el formato correcto. Si el usuario deja la línea VACÍA devuelven "" y quien
+// el formato correcto. Si el usuario deja la linea VACIA devuelven "" y quien
 // las llamo interpreta eso como "cancelar" (asi nadie queda atrapado en un
 // ciclo). Tambien devuelven "" si la entrada se cerro.
 
@@ -98,7 +118,7 @@ std::string leerIdTutor(const std::string& mensaje) {
     }
 }
 
-// Telefono: exactamente DIGITOS_TELEFONO dígitos, solo numeros.
+// Telefono: exactamente DIGITOS_TELEFONO digitos, solo numeros.
 std::string leerTelefono(const std::string& mensaje) {
     while (true) {
         std::string telefono = leerTexto(mensaje);
@@ -183,7 +203,7 @@ void mostrarTutoresDe(const Infante& inf) {
 // ---------------------------------------------------------------------
 
 // Constructor: crea la guarderia con su capacidad y pone el contador en 0.
-// (El vector 'historial' empieza vacío por si solo.)
+// (El vector 'historial' empieza vacio por si solo.)
 MenuGuarderia::MenuGuarderia()
     : guarderia("Rayito de Sol", CAPACIDAD_MAXIMA),
       contadorRegistros(0)
@@ -191,6 +211,7 @@ MenuGuarderia::MenuGuarderia()
 }
 
 // El menu muestra SIEMPRE cuantos infantes hay y cuantos caben.
+// [ACTUALIZACION]: Se incluye la opcion 10 para Salida de Emergencia.
 void MenuGuarderia::mostrarMenu() const {
     std::cout << "===== GUARDERIA " << guarderia.getNombreGuarderia() << " =====\n"
               << "Infantes: " << guarderia.contarInfantes() << " de " << guarderia.getCapacidadMaxima()
@@ -204,10 +225,11 @@ void MenuGuarderia::mostrarMenu() const {
               << "7. Eliminar infante\n"
               << "8. Agregar 3 infantes de ejemplo (solo para probar)\n"
               << "9. Administrar tutores (listar / agregar / reemplazar / eliminar)\n"
+              << "10. Registrar salida de emergencia\n"
               << "0. Salir\n";
 }
 
-// OPCIÓN 1: pide los datos, arma las piezas (Tutor, Expediente, Infante) y las inscribe.
+// OPCION 1: pide los datos, arma las piezas (Tutor, Expediente, Infante) y las inscribe.
 void MenuGuarderia::opcionInscribir() {
     if (!guarderia.hayCupo()) {
         std::cout << "La guarderia esta llena (" << guarderia.contarInfantes() << " de "
@@ -306,9 +328,9 @@ void MenuGuarderia::opcionInscribir() {
         std::string alergia = leerTexto("  Alergia: ");
         if (leerSiNo("  Indicar severidad? (s/n): ")) {
             std::string severidad = leerTexto("  Severidad: ");
-            expediente->agregarAlergia(alergia, severidad);   // [SOBRECARGA] version de 2 parámetros
+            expediente->agregarAlergia(alergia, severidad);   // [SOBRECARGA] version de 2 parametros
         } else {
-            expediente->agregarAlergia(alergia);              // [SOBRECARGA] version de 1 parámetro
+            expediente->agregarAlergia(alergia);              // [SOBRECARGA] version de 1 parametro
         }
     }
 
@@ -322,7 +344,7 @@ void MenuGuarderia::opcionInscribir() {
     }
 }
 
-// OPCIÓN 2: lista todos los infantes.
+// OPCION 2: lista todos los infantes.
 void MenuGuarderia::opcionListar() const {
     if (guarderia.contarInfantes() == 0) {           // [SOBRECARGA] sin parametros: total
         std::cout << "No hay infantes inscritos.\n";
@@ -333,7 +355,7 @@ void MenuGuarderia::opcionListar() const {
     }
 }
 
-// OPCIÓN 3: SEPARA a los infantes por categoria.
+// OPCION 3: SEPARA a los infantes por categoria.
 void MenuGuarderia::opcionPorCategoria() const {
     const std::vector<std::string> categorias = {"Lactante", "Preescolar"};
     for (const std::string& categoria : categorias) {
@@ -347,7 +369,7 @@ void MenuGuarderia::opcionPorCategoria() const {
     std::cout << "Total: " << guarderia.contarInfantes() << " de " << guarderia.getCapacidadMaxima() << "\n";
 }
 
-// OPCIÓN 4: busca un infante y muestra todo sobre el.
+// OPCION 4: busca un infante y muestra todo sobre el.
 void MenuGuarderia::opcionBuscar() const {
     std::string id = aMayusculas(leerTexto("Id a buscar: "));
     std::shared_ptr<Infante> inf = guarderia.buscarInfante(id);
@@ -366,7 +388,7 @@ void MenuGuarderia::opcionBuscar() const {
     std::cout << "   Formato de texto (operador <<):\n" << *inf;
 }
 
-// OPCIÓN 5: el PROCESO DE INGRESO. Usa herencia, polimorfismo y la dependencia
+// OPCION 5: el PROCESO DE INGRESO. Usa herencia, polimorfismo y la dependencia
 // entre Ingreso_Guarderia y Ficha_Medica.
 void MenuGuarderia::opcionIngreso() {
     std::string id = aMayusculas(leerTexto("Id del infante: "));
@@ -376,7 +398,7 @@ void MenuGuarderia::opcionIngreso() {
         return;
     }
     bool golpes = leerSiNo("Presenta golpes? (s/n): ");
-    float temperatura = leerDecimal("Temperatura en C: ");
+    float temperatura = leerTemperatura("Temperatura en C: ");
 
     // IRREGULARIDADES: se pregunta si presenta alguna y, si es asi, cual y que tan seria.
     // Se captura ANTES de crear los registros: si el usuario cancela, no se crea nada
@@ -398,7 +420,7 @@ void MenuGuarderia::opcionIngreso() {
 
     ++contadorRegistros;                             // numero consecutivo para los ids de los registros
     std::string fecha = fechaHoy();
-    // Ambos registros apuntan al MISMO infante de la guardería.
+    // Ambos registros apuntan al MISMO infante de la guarderia.
     std::shared_ptr<Ficha_Medica> ficha = std::make_shared<Ficha_Medica>(
         "F-" + std::to_string(contadorRegistros), fecha, inf, golpes, temperatura);
     std::shared_ptr<Ingreso_Guarderia> ingreso = std::make_shared<Ingreso_Guarderia>(
@@ -439,7 +461,7 @@ void MenuGuarderia::opcionIngreso() {
     }
 }
 
-// OPCIÓN 6: imprime el historial de todos los registros del programa.
+// OPCION 6: imprime el historial de todos los registros del programa.
 void MenuGuarderia::opcionHistorial() const {
     if (historial.empty()) {
         std::cout << "Aun no hay registros.\n";
@@ -450,10 +472,10 @@ void MenuGuarderia::opcionHistorial() const {
     }
 }
 
-// OPCIÓN 7: elimina un infante (pidiendo confirmacion, porque no se puede deshacer).
+// OPCION 7: elimina un infante (pidiendo confirmacion, porque no se puede deshacer).
 // Nota: los registros que ya esten en el historial se CONSERVAN (el historial
 // guarda su propio puntero compartido al infante), igual que en una guarderia
-// real el historial no se borra cuando un niño se da de baja.
+// real el historial no se borra cuando un nino se da de baja.
 void MenuGuarderia::opcionEliminar() {
     if (guarderia.contarInfantes() == 0) {
         std::cout << "No hay infantes inscritos.\n";
@@ -465,12 +487,12 @@ void MenuGuarderia::opcionEliminar() {
         std::cout << "No se encontro ese infante.\n";
         return;
     }
-    mostrarInfante(*inf);                            // se muestra a quién se va a eliminar
+    mostrarInfante(*inf);                            // se muestra a quien se va a eliminar
     if (!leerSiNo("Seguro que quieres eliminarlo? No se puede deshacer (s/n): ")) {
         std::cout << "No se elimino nada.\n";
         return;
     }
-    if (guarderia.eliminarInfante(id)) {             // devuelve true si lo encontró y lo borró
+    if (guarderia.eliminarInfante(id)) {             // devuelve true si lo encontro y lo borro
         std::cout << "Infante eliminado. Cupos libres: "
                   << guarderia.getCapacidadMaxima() - guarderia.contarInfantes() << ".\n";
     } else {
@@ -478,7 +500,7 @@ void MenuGuarderia::opcionEliminar() {
     }
 }
 
-// Ayuda de la opción 8: inscribe un infante de ejemplo y avisa que paso.
+// Ayuda de la opcion 8: inscribe un infante de ejemplo y avisa que paso.
 void MenuGuarderia::inscribirEjemplo(const std::shared_ptr<Infante>& infante) {
     if (guarderia.inscribirInfante(infante)) {
         std::cout << "  + " << infante->getIdInfante() << " " << infante->getNombreCompleto()
@@ -488,7 +510,7 @@ void MenuGuarderia::inscribirEjemplo(const std::shared_ptr<Infante>& infante) {
     }
 }
 
-// OPCIÓN 8: como los datos no se guardan en disco, esta opcion crea tres infantes
+// OPCION 8: como los datos no se guardan en disco, esta opcion crea tres infantes
 // de ejemplo para poder probar el resto del menu sin teclear todo.
 void MenuGuarderia::opcionDemo() {
     std::cout << "Agregando infantes de ejemplo:\n";
@@ -521,7 +543,7 @@ void MenuGuarderia::opcionDemo() {
 }
 
 // ---------------------------------------------------------------------
-//  OPCIÓN 9: ADMINISTRAR TUTORES (submenu)
+//  OPCION 9: ADMINISTRAR TUTORES (submenu)
 //  Las operaciones se hacen SOBRE UN INFANTE, porque la regla "cada infante
 //  necesita al menos un tutor" (1..*) es de cada infante.
 // ---------------------------------------------------------------------
@@ -619,7 +641,7 @@ void MenuGuarderia::opcionEliminarTutor() {
                   << "Usa 'Reemplazar' en su lugar.\n";
         return;
     }
-    std::string nombreTutor = tutor->getNombre();    // se guarda ANTES de eliminar (el puntero dejaría de ser válido)
+    std::string nombreTutor = tutor->getNombre();    // se guarda ANTES de eliminar (el puntero dejaria de ser valido)
     if (!leerSiNo("Eliminar a " + nombreTutor + " como tutor de " + inf->getNombreCompleto() + "? (s/n): ")) {
         std::cout << "No se elimino nada.\n";
         return;
@@ -629,6 +651,40 @@ void MenuGuarderia::opcionEliminarTutor() {
     } else {
         std::cout << "No se pudo eliminar.\n";
     }
+}
+
+// [ACTUALIZACION]: OPCION 10 - Registrar salida de emergencia de un infante
+void MenuGuarderia::opcionSalidaEmergencia() {
+    if (guarderia.contarInfantes() == 0) {
+        std::cout << "No hay infantes en la guarderia.\n";
+        return;
+    }
+    std::string id = aMayusculas(leerTexto("Id del infante para salida de emergencia (formato " + formatoId('I') + "): "));
+    std::shared_ptr<Infante> inf = guarderia.buscarInfante(id);
+    if (!inf) {
+        std::cout << "No se encontro ese infante en la guarderia.\n";
+        return;
+    }
+
+    std::string motivo = leerTexto("Motivo / explicacion de la salida de emergencia: ");
+    if (motivo.empty()) {
+        std::cout << "Salida de emergencia cancelada.\n";
+        return;
+    }
+
+    ++contadorRegistros;
+    std::string fecha = fechaHoy();
+    std::shared_ptr<Salida_Emergencia> salida = std::make_shared<Salida_Emergencia>(
+        "E-" + std::to_string(contadorRegistros), fecha, inf, motivo);
+
+    salida->iniciarProceso();
+    historial.push_back(salida);
+
+    // Se remueve el infante de la guarderia actualizando su estatus y liberando la capacidad ocupada
+    guarderia.registrarSalidaEmergencia(id);
+
+    std::cout << "SALIDA DE EMERGENCIA REGISTRADA CON EXITO.\n";
+    std::cout << salida->generarReporte() << "\n";
 }
 
 // Submenu de tutores: se repite hasta que el usuario elige 0 (volver).
@@ -674,6 +730,7 @@ void MenuGuarderia::ejecutar() {
             case 7: opcionEliminar(); break;
             case 8: opcionDemo(); break;
             case 9: menuTutores(); break;
+            case 10: opcionSalidaEmergencia(); break;  // [ACTUALIZACION]
             case 0: std::cout << "Hasta luego.\n"; break;
             default: std::cout << "Opcion invalida.\n";
         }
@@ -682,8 +739,8 @@ void MenuGuarderia::ejecutar() {
 }
 
 // Punto de entrada que llama main(). Crea el menu (un objeto local) y lo ejecuta.
-// Aquí NO se repite 'static': esa palabra solo va en la declaración del .h.
+// Aqui NO se repite 'static': esa palabra solo va en la declaracion del .h.
 void MenuGuarderia::ejecutarSistema() {
     MenuGuarderia menu;                  // llama al constructor
     menu.ejecutar();
-}   // al salir de la funcion el menú se destruye solo (y con el la guardería)
+}   // al salir de la funcion el menu se destruye solo (y con el la guarderia)

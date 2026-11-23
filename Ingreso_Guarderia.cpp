@@ -1,11 +1,14 @@
 #include "Ingreso_Guarderia.h"
+#include "Utilidades.h"   // fechaHoraActual()
 
 Ingreso_Guarderia::Ingreso_Guarderia(const std::string &idProceso,
                                      const std::string &fecha,
                                      const std::shared_ptr<Infante> &infante) : Registro(idProceso, fecha, infante),
                                                                                 ingresoAprobado(false),
                                                                                 motivoRechazo(""),
-                                                                                advertencia("")
+                                                                                advertencia(""),
+                                                                                fechaHoraEntrada(""),
+                                                                                fechaHoraRechazo("")
 {
 }
 
@@ -17,6 +20,8 @@ void Ingreso_Guarderia::iniciarProceso()
     ingresoAprobado = false;
     motivoRechazo = "";
     advertencia = "";
+    fechaHoraEntrada = "";
+    fechaHoraRechazo = "";
     infante->actualizarEstatus("Pendiente"); // modifica al infante REAL (compartido)
     agregarObservaciones("Proceso de ingreso iniciado");
 }
@@ -51,6 +56,8 @@ bool Ingreso_Guarderia::validarAcceso(const Ficha_Medica &ficha)
     //    Advertencia, se aprueba CON advertencia y queda constancia de ella.
     ingresoAprobado = true;
     motivoRechazo = "";
+    fechaHoraEntrada = fechaHoraActual();   // se guarda la fecha y hora de entrada
+    fechaHoraRechazo = "";
     infante->actualizarEstatus("Aceptado");
     if (ficha.getSeveridad() == SeveridadIrregularidad::Advertencia)
     {
@@ -70,6 +77,8 @@ void Ingreso_Guarderia::rechazarYActualizarEstatus()
 {
     ingresoAprobado = false;
     advertencia = "";
+    fechaHoraEntrada = "";
+    fechaHoraRechazo = fechaHoraActual();   // se guarda la fecha y hora del rechazo
     infante->actualizarEstatus("Rechazado");
     agregarObservaciones("Ingreso rechazado");
 }
@@ -80,6 +89,11 @@ std::string Ingreso_Guarderia::generarReporte() const
     std::string resultado = Registro::generarReporte();
     resultado += " | [Ingreso] Aprobado: ";
     resultado += (ingresoAprobado ? "Si" : "No");
+    if (ingresoAprobado) {
+        resultado += " | Entrada: " + fechaHoraEntrada;
+    } else if (!fechaHoraRechazo.empty()) {
+        resultado += " | Rechazado: " + fechaHoraRechazo;
+    }
     if (!advertencia.empty()) {
         resultado += " (CON ADVERTENCIA: " + advertencia + ")";
     }
@@ -93,3 +107,5 @@ std::string Ingreso_Guarderia::generarReporte() const
 bool Ingreso_Guarderia::getIngresoAprobado() const { return ingresoAprobado; }
 std::string Ingreso_Guarderia::getMotivoRechazo() const { return motivoRechazo; }
 std::string Ingreso_Guarderia::getAdvertencia() const { return advertencia; }
+std::string Ingreso_Guarderia::getFechaHoraEntrada() const { return fechaHoraEntrada; }
+std::string Ingreso_Guarderia::getFechaHoraRechazo() const { return fechaHoraRechazo; }

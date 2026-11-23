@@ -23,13 +23,16 @@ public:
     Guarderia(const std::string& nombreGuarderia, int capacidadMaxima);
 
     // Cambio respecto al UML: devuelven bool (antes void) para poder avisar si
-    // la operación se hizo (true) o no (false: lleno, repetido, no encontrado,
+    // la operacion se hizo (true) o no (false: lleno, repetido, no encontrado,
     // o con ids / telefonos que no cumplen el formato de Validaciones.h).
     bool inscribirInfante(const std::shared_ptr<Infante>& infante);
     bool eliminarInfante(const std::string& idInfante);
 
+    // [ACTUALIZACION]: Metodo para procesar la salida de emergencia de un infante de la guarderia
+    bool registrarSalidaEmergencia(const std::string& idInfante);
+
     // Devuelve un puntero; si no existe devuelve nullptr ("no apunta a nada").
-    // Un Infante por valor no podría representar "no encontrado", y una copia
+    // Un Infante por valor no podria representar "no encontrado", y una copia
     // no permitiria modificar al infante real.
     std::shared_ptr<Infante> buscarInfante(const std::string& idInfante) const;
 

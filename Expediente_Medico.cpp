@@ -42,7 +42,7 @@ const std::vector<std::string>& Expediente_Medico::getAlergias() const { return 
 const std::vector<std::string>& Expediente_Medico::getDiscapacidades() const { return discapacidades; }
 
 // Devuelve UN vector nuevo con alergias y discapacidades juntas (una copia:
-// quien lo reciba no puede dañar los datos internos).
+// quien lo reciba no puede danar los datos internos).
 std::vector<std::string> Expediente_Medico::consultarCondiciones() const {
     std::vector<std::string> condiciones;
     for (const std::string& a : alergias) {          // "para cada a dentro de alergias"
@@ -57,7 +57,7 @@ std::vector<std::string> Expediente_Medico::consultarCondiciones() const {
 // Version LEGIBLE para pantalla. Las hijas la llaman con
 // Expediente_Medico::generarResumen() y le agregan sus datos propios.
 std::string Expediente_Medico::generarResumen() const {
-    // Operador ternario:  condición ? valor_si_true : valor_si_false
+    // Operador ternario:  condicion ? valor_si_true : valor_si_false
     // std::string("ninguna") fuerza que ambos lados sean del mismo tipo.
     std::string textoAlergias =
         alergias.empty() ? std::string("ninguna") : unir(alergias, ',');

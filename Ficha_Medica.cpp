@@ -16,21 +16,24 @@ Ficha_Medica::Ficha_Medica(const std::string &idProceso,
 {
 }
 
-// [SOBRECARGA 1] Usa el limite por defecto. Delega en la version con parametro.
-// 37.5 es un valor de EJEMPLO del proyecto, no un criterio medico real.
+// [SOBRECARGA 1] Usa el limite maximo por defecto (TEMP_NORMAL_MAX = 37.5).
+// Delega en la version con parametro.
 bool Ficha_Medica::evaluacionSalud() const
 {
-    return evaluacionSalud(37.5f); // la 'f' indica que es un float, no un double
+    return evaluacionSalud(TEMP_NORMAL_MAX);
 }
 
-// [SOBRECARGA 2] Esta sano si NO tiene golpes Y la temperatura es menor al limite.
-// "!" = NO,  "&&" = Y.
+// [SOBRECARGA 2] Esta sano si NO tiene golpes, la temperatura esta DENTRO del rango
+// normal (de TEMP_NORMAL_MIN hasta el limite maximo, ambos incluidos) y no hay
+// irregularidad grave. "!" = NO,  "&&" = Y.
 bool Ficha_Medica::evaluacionSalud(float limiteTemperatura) const
 {
-   return !tieneGolpes && temperatura < limiteTemperatura
+   return !tieneGolpes
+           && temperatura >= TEMP_NORMAL_MIN && temperatura <= limiteTemperatura
            && severidad != SeveridadIrregularidad::Grave;
 }
-// Registra una irregularidad: qué es y que tan seria es.
+
+// Registra una irregularidad: que es y que tan seria es.
 bool Ficha_Medica::registrarIrregularidad(const std::string& descripcion,
                                           SeveridadIrregularidad nuevaSeveridad) {
     if (descripcion.empty() || nuevaSeveridad == SeveridadIrregularidad::Ninguna) {
@@ -40,6 +43,7 @@ bool Ficha_Medica::registrarIrregularidad(const std::string& descripcion,
     severidad = nuevaSeveridad;
     return true;
 }
+
 // [SOBRESCRITURA] Para una ficha, "iniciar el proceso" = evaluar la salud
 // y dejar constancia en las observaciones.
 void Ficha_Medica::iniciarProceso()

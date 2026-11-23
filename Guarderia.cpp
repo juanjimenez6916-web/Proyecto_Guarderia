@@ -11,7 +11,7 @@ Guarderia::Guarderia(const std::string& nombreGuarderia, int capacidadMaxima)
 // GUARD CLAUSES: primero se revisa todo lo que IMPEDIRIA la operacion y se sale
 // temprano con 'return false'. El caso feliz queda al final, sin if anidados.
 bool Guarderia::inscribirInfante(const std::shared_ptr<Infante>& infante) {
-    if (!infante) {                   // puntero vacío (nullptr)
+    if (!infante) {                   // puntero vacio (nullptr)
         return false;
     }
     if (cantidadActual >= capacidadMaxima) {   // sin cupo
@@ -45,7 +45,7 @@ bool Guarderia::eliminarInfante(const std::string& idInfante) {
     // size_t es el tipo correcto para recorrer un vector por indice.
     for (std::size_t i = 0; i < infantes.size(); ++i) {
         if (infantes[i]->getIdInfante() == idInfante) {   // '->' accede a un miembro mediante un puntero
-            // erase necesita una POSICIÓN (iterador), no un numero:
+            // erase necesita una POSICION (iterador), no un numero:
             // begin() es la posicion del primero; sumarle i avanza hasta el elemento i.
             infantes.erase(infantes.begin() + i);
             cantidadActual = static_cast<int>(infantes.size());
@@ -55,13 +55,24 @@ bool Guarderia::eliminarInfante(const std::string& idInfante) {
     return false;                     // recorrimos todo y no estaba
 }
 
+// [ACTUALIZACION]: Permite ejecutar la salida de emergencia de un infante en la guarderia,
+// actualizando su estatus y removiendolo de la ocupacion actual.
+bool Guarderia::registrarSalidaEmergencia(const std::string& idInfante) {
+    std::shared_ptr<Infante> inf = buscarInfante(idInfante);
+    if (!inf) {
+        return false;
+    }
+    inf->actualizarEstatus("Salida de Emergencia");
+    return eliminarInfante(idInfante);
+}
+
 std::shared_ptr<Infante> Guarderia::buscarInfante(const std::string& idInfante) const {
     for (const std::shared_ptr<Infante>& inf : infantes) {
         if (inf->getIdInfante() == idInfante) {
             return inf;               // devolvemos el puntero (no una copia del infante)
         }
     }
-    return nullptr;                   // señal de "no encontrado"
+    return nullptr;                   // senal de "no encontrado"
 }
 
 // POLIMORFISMO en accion: no preguntamos "¿eres de tal clase?". Le pedimos al
@@ -107,7 +118,7 @@ std::vector<Tutor> Guarderia::obtenerTutores() const {
     return resultado;
 }
 
-// "¿De quién es tutor?": los infantes cuya lista de tutores incluye ese id.
+// "¿De quien es tutor?": los infantes cuya lista de tutores incluye ese id.
 std::vector<std::shared_ptr<Infante>> Guarderia::obtenerInfantesDeTutor(const std::string& idTutor) const {
     std::vector<std::shared_ptr<Infante>> resultado;
     for (const std::shared_ptr<Infante>& inf : infantes) {

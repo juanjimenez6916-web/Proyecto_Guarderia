@@ -11,6 +11,11 @@ enum class SeveridadIrregularidad
     Grave
 };
 
+// Rango de temperatura NORMAL de un nino (axilar), en grados C. Los extremos
+// cuentan como normales: 36.0 y 37.5 SI pasan. Cambialos aqui si piden otro rango.
+const float TEMP_NORMAL_MIN = 36.0f;
+const float TEMP_NORMAL_MAX = 37.5f;
+
 class Ficha_Medica : public Registro
 {
 private:
@@ -30,15 +35,15 @@ public:
     void iniciarProceso() override;              // implementa el virtual puro
     std::string generarReporte() const override; // extiende el reporte del padre
 
-    // [SOBRECARGA] Sin parametros usa el límite por defecto (37.5);
-    // con parametro usa el limite que tu elijas.
+    // [SOBRECARGA] Sin parametros usa el rango normal (36.0 a 37.5);
+    // con parametro usa el limite MAXIMO que tu elijas (el minimo sigue siendo 36.0).
     // Son 'const': solo CONSULTAN (no modifican la ficha). Quien guarda el
     // resultado es iniciarProceso().
     bool evaluacionSalud() const;
     bool evaluacionSalud(float limiteTemperatura) const;
 
     // Registra una irregularidad. Devuelve false (y no cambia nada) si la
-    // descripción está vacía o la severidad es Ninguna.
+    // descripcion esta vacia o la severidad es Ninguna.
     bool registrarIrregularidad(const std::string& descripcion,
                                 SeveridadIrregularidad nuevaSeveridad);
 

@@ -9,7 +9,7 @@ class MenuGuarderia {
 private:
     // ----- ESTADO DEL SISTEMA (antes eran variables locales de main) -----
     // Al ser atributos de la clase, TODAS las opciones del menu los comparten
-    // sin tener que pasárselos como parámetros.
+    // sin tener que pasarselos como parametros.
     Guarderia guarderia;                                  // la guarderia con sus infantes
     std::vector<std::shared_ptr<Registro>> historial;     // todos los registros creados
     int contadorRegistros;                                // para numerar F-1, G-1, F-2...
@@ -26,6 +26,7 @@ private:
     void opcionEliminar();              // 7
     void opcionDemo();                  // 8
     void menuTutores();                 // 9 (abre un submenu)
+    void opcionSalidaEmergencia();      // 10 [ACTUALIZACION: Registrar salida de emergencia]
     void opcionListarTutores() const;   //   9 -> 1
     void opcionAgregarTutor();          //   9 -> 2
     void opcionReemplazarTutor();       //   9 -> 3

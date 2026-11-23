@@ -7,9 +7,9 @@ const int DIGITOS_ID = 4;          // I-0001 y T-0001 llevan 4 digitos
 const int DIGITOS_TELEFONO = 10;   // telefono de 10 digitos
 
 // true si el texto NO esta vacio y TODOS sus caracteres son digitos '0'..'9'.
-inline bool soloDigitos(const std::string& texto) { //inline: es una palabra clave que se coloca antes de una función
-                                                   // para indicarle al compilador que inserte el cuerpo de la función directamente en cada lugar donde sea llamada, 
-                                                   //en vez de hacer una llamada a función tradicional.
+inline bool soloDigitos(const std::string& texto) { // inline: es una palabra clave que se coloca antes de una funcion
+                                                   // para indicarle al compilador que inserte el cuerpo de la funcion directamente en cada lugar donde sea llamada, 
+                                                   // en vez de hacer una llamada a funcion tradicional.
     if (texto.empty()) {
         return false;
     }
@@ -23,13 +23,13 @@ inline bool soloDigitos(const std::string& texto) { //inline: es una palabra cla
 
 // Comprueba el formato "<letra>-<N digitos>". Ejemplo: ("I-0001", 'I', 4) -> true
 inline bool tieneFormatoId(const std::string& texto, char letra, int digitos) {
-    // Largo esperado: letra + guion + los dígitos.
+    // Largo esperado: letra + guion + los digitos.
     if (texto.size() != static_cast<std::size_t>(2 + digitos)) {
         return false;
-        //static_cast es el operador oficial de C++ para realizar conversiones explicitas de tipo de datos en tiempo de compilacion de forma segura y controlada.
-        //Convierte el int (con signo) al tipo sin signo que devuelve size().
-        //Comparar ambos tipos sin convertir provoca una advertencia del compilador 
-        //y puede dar resultados no esperados con numeros negativos
+        // static_cast es el operador oficial de C++ para realizar conversiones explicitas de tipo de datos en tiempo de compilacion de forma segura y controlada.
+        // Convierte el int (con signo) al tipo sin signo que devuelve size().
+        // Comparar ambos tipos sin convertir provoca una advertencia del compilador 
+        // y puede dar resultados no esperados con numeros negativos
     }
     if (texto[0] != letra || texto[1] != '-') {
         return false;

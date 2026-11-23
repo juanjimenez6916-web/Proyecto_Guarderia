@@ -2,7 +2,7 @@
 #include "Validaciones.h"   // reglas de formato (ids y telefonos)
 
 // CONSTRUCTOR. El orden de la lista de inicializacion coincide con el orden de
-// declaración de los atributos (C++ inicializa SIEMPRE en el orden de declaración).
+// declaracion de los atributos (C++ inicializa SIEMPRE en el orden de declaracion).
 Infante::Infante(const std::string& idInfante,
                  const std::string& nombreCompleto,
                  const Tutor& tutorPrincipal,
@@ -15,12 +15,14 @@ Infante::Infante(const std::string& idInfante,
     tutores.push_back(tutorPrincipal);   // cumple la multiplicidad 1..*
 }
 
-// Solo acepta los tres estatus validos. Devuelve false (y NO cambia nada) si no.
+// Solo acepta los estatus validos. Devuelve false (y NO cambia nada) si no.
+// [ACTUALIZACION]: Se agrega "Salida de Emergencia" a los estatus permitidos.
 bool Infante::actualizarEstatus(const std::string& estatus) {
-    //Los string distinguen mayusculas: "aceptado" != "Aceptado".
+    // Los string distinguen mayusculas: "aceptado" != "Aceptado".
     bool esValido = (estatus == "Pendiente" ||
                      estatus == "Aceptado"  ||
-                     estatus == "Rechazado");
+                     estatus == "Rechazado" ||
+                     estatus == "Salida de Emergencia");
 
     if (!esValido) {
         return false;                  // "guard clause": salimos temprano si algo esta mal
@@ -35,7 +37,7 @@ Expediente_Medico& Infante::getExpediente() { return *expediente; }
 const Expediente_Medico& Infante::getExpediente() const { return *expediente; }
 
 // Busca un tutor por id. Devuelve la direccion del tutor dentro del vector (o
-// nullptr si no esta). '&t' = "la dirección de t".
+// nullptr si no esta). '&t' = "la direccion de t".
 const Tutor* Infante::buscarTutor(const std::string& idTutor) const {
     for (const Tutor& t : tutores) {
         if (t.getIdTutor() == idTutor) {
@@ -63,7 +65,7 @@ bool Infante::agregarTutor(const Tutor& tutor) {
 }
 
 // Elimina un tutor. La multiplicidad 1..* del UML exige que SIEMPRE quede al
-// menos uno, asi que se rechaza si es el u nico (para eso existe reemplazarTutor).
+// menos uno, asi que se rechaza si es el unico (para eso existe reemplazarTutor).
 bool Infante::eliminarTutor(const std::string& idTutor) {
     if (tutores.size() <= 1) {
         return false;
@@ -103,7 +105,7 @@ std::string Infante::getNombreCompleto() const { return nombreCompleto; }
 std::string Infante::getEstatusActual() const { return estatusActual; }
 
 // [OPERADOR <<] Escribe un registro completo. Se escribe en pantalla con cout.
-// Formato (una etiqueta al inicio de cada línea):
+// Formato (una etiqueta al inicio de cada linea):
 //   INFANTE|id|nombre|estatus
 //   T|id|nombre|telefono|parentesco      (una por tutor)
 //   E|categoria|id|alergias|discap|...   (el expediente)
